@@ -1,11 +1,27 @@
-# Proyecto: NatiApp (Especificación Técnica)
+# NatiApp - Sistema de Gestión de Natilleras
 
-## 1. Concepto Central (MVP)
+[![Deploy Status](https://img.shields.io/badge/deploy-production-success)](https://nati-app-a4a22.web.app)
+[![Firebase](https://img.shields.io/badge/Firebase-Hosting-orange)](https://firebase.google.com)
+[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev)
+
+> **Aplicación en producción:** [https://nati-app-a4a22.web.app](https://nati-app-a4a22.web.app)
+
+## 🎯 Concepto Central
 
 La aplicación **"NatiApp"** no es una pasarela de pagos. Es un **libro contable social y transparente** diseñado para digitalizar y formalizar la confianza de las "natilleras" tradicionales.
 
 * **Problema que soluciona:** El desorden de los grupos de WhatsApp, los Excel compartidos, la falta de transparencia sobre quién ha pagado y la carga manual del tesorero.
-* **Solución (MVP):** Una aplicación web donde un "Administrador" crea un grupo (natillera) y los "Miembros" reportan sus pagos. El Administrador los valida manualmente (revisando su cuenta bancaria personal) y marca el pago como "recibido" en la app, actualizando el estado para todos los miembros en tiempo real.
+* **Solución:** Una aplicación web donde un "Administrador" crea un grupo (natillera) y los "Miembros" reportan sus pagos. El Administrador los valida manualmente (revisando su cuenta bancaria personal) y marca el pago como "recibido" en la app, actualizando el estado para todos los miembros en tiempo real.
+
+### ✨ Características Principales
+
+- 📊 **Dashboard interactivo** con gráficos estadísticos
+- 📈 **Reportes avanzados** con exportación a PDF, Excel y CSV
+- 🔄 **Actualizaciones en tiempo real** con Firestore
+- 👥 **Gestión de múltiples natilleras** por usuario
+- 🎨 **Diseño responsive** optimizado para móvil y desktop
+- 🔒 **Autenticación segura** con Firebase Auth
+- 📱 **Notificaciones visuales** con sistema de modales y toasts
 
 ---
 
@@ -31,27 +47,26 @@ La aplicación se estructura en dos roles principales:
 
 ---
 
-## 3. Stack Técnico y Servicios de Firebase
+## 🛠️ Stack Técnico
 
-* **Front-end:** React (con Vite)
-* **Enrutador:** React Router
-* **Back-end & DB:** Firebase
+### Frontend
+- **React 19** - Biblioteca de UI con hooks
+- **Vite** - Build tool ultrarrápido
+- **React Router v7** - Navegación SPA
+- **Tailwind CSS v4** - Estilos utility-first
+- **Recharts** - Gráficos estadísticos interactivos
 
-Utilizaremos los siguientes servicios de Firebase:
+### Backend & Servicios
+- **Firebase Authentication** - Login con Email/Password y Google
+- **Firestore** - Base de datos NoSQL en tiempo real
+- **Firebase Hosting** - Hosting con SSL automático
+- **Firebase Security Rules** - Protección de datos
 
-1.  **Firebase Authentication:**
-    * Para el login y registro de usuarios.
-    * Métodos: "Email/Contraseña" y "Google Sign-In".
-
-2.  **Firestore (Base de Datos):**
-    * El cerebro de la aplicación. Almacenará toda la información de usuarios, grupos y aportes.
-
-3.  **Firebase Storage:**
-    * (Opcional para el MVP, esencial para v2).
-    * Para almacenar las imágenes de los comprobantes de pago subidos por los miembros.
-
-4.  **Firebase Hosting:**
-    * Para el despliegue y hosting de la aplicación de React.
+### Librerías Adicionales
+- **jsPDF** - Exportación de reportes a PDF
+- **xlsx** - Exportación a Excel
+- **file-saver** - Descarga de archivos
+- **html2canvas** - Captura de pantalla para PDFs
 
 ---
 
