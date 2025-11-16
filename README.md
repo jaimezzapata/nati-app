@@ -158,7 +158,7 @@ Este es el libro contable. Cada documento representa un único pago reportado po
 
 
 ## 6. Encarpetado
-
+```
 /NatiApp-Project/
 ├── public/               # Iconos, imágenes estáticas
 ├── src/
@@ -218,3 +218,4 @@ Este es el libro contable. Cada documento representa un único pago reportado po
 ├── firebase.json         # Configuración de hosting de Firebase
 ├── package.json
 └── vite.config.js
+```
