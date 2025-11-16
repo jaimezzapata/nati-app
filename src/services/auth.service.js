@@ -6,7 +6,7 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from './firebase.config';
 
 // Proveedor de Google para autenticación
@@ -131,6 +131,36 @@ export const getUserData = async (uid) => {
     }
   } catch (error) {
     console.error('Error al obtener datos del usuario:', error);
+    throw error;
+  }
+};
+
+/**
+ * Actualizar el nombre del usuario
+ * @param {string} uid - ID del usuario
+ * @param {string} nombre - Nuevo nombre del usuario
+ * @returns {Promise<void>}
+ */
+export const updateUserName = async (uid, nombre) => {
+  try {
+    const user = auth.currentUser;
+    
+    if (!user) {
+      throw new Error('Usuario no autenticado');
+    }
+
+    // Actualizar el perfil en Firebase Auth
+    await updateProfile(user, {
+      displayName: nombre,
+    });
+
+    // Actualizar el documento en Firestore
+    const userDocRef = doc(db, 'users', uid);
+    await updateDoc(userDocRef, {
+      nombre: nombre,
+    });
+  } catch (error) {
+    console.error('Error al actualizar nombre:', error);
     throw error;
   }
 };

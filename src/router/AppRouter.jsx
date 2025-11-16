@@ -10,8 +10,9 @@ import JoinPage from '../pages/public/JoinPage';
 // Páginas privadas (las crearemos más adelante)
 import DashboardPage from '../pages/private/DashboardPage';
 import CreateNatilleraPage from '../pages/private/CreateNatilleraPage';
-import NatilleraDetailPage from '../pages/private/NatilleraDetailPage/NatilleraDetailPage';
+import NatilleraDetailPage from '../pages/private/NatilleraDetailPage';
 import ProfilePage from '../pages/private/ProfilePage';
+import ReportsPage from '../pages/private/ReportsPage';
 
 /**
  * Router principal de la aplicación
@@ -45,7 +46,7 @@ export const AppRouter = () => {
           }
         />
         <Route
-          path="/natillera/:natilleraId"
+          path="/natillera/:id"
           element={
             <ProtectedRoute>
               <NatilleraDetailPage />
@@ -57,6 +58,14 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reportes/:natilleraId"
+          element={
+            <ProtectedRoute>
+              <ReportsPage />
             </ProtectedRoute>
           }
         />
