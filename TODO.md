@@ -3,26 +3,26 @@
 ## Fase 1: Configuración Base
 
 ### ✅ Tareas Completadas
-- [✅] **Configurar Firebase en el proyecto**
+- [ ✅ ] **Configurar Firebase en el proyecto**
   - Crear proyecto en Firebase Console, instalar dependencias (firebase), crear firebase.config.js con la configuración inicial y habilitar Authentication (Email/Password y Google), Firestore y Storage
 
-- [✅] **Crear estructura de carpetas base**
+- [ ✅ ] **Crear estructura de carpetas base**
   - Configurar la estructura completa: components/ui, components/layout, context, hooks, pages/public, pages/private, services, utils, router según la especificación del README
 
-- [ ] **Implementar AuthContext y AuthProvider**
+- [ ✅ ] **Implementar AuthContext y AuthProvider**
   - Crear el contexto de autenticación que maneje el estado del usuario logueado, crear AuthProvider para envolver la app y hook useAuth para consumir el contexto
 
-- [ ] **Desarrollar servicios de autenticación**
+- [ ✅ ] **Desarrollar servicios de autenticación**
   - Crear auth.service.js con funciones: login(), register(), loginWithGoogle(), logout() y getCurrentUser()
 
-- [ ] **Configurar React Router y rutas**
+- [ ✅ ] **Configurar React Router y rutas**
   - Crear AppRouter.jsx con todas las rutas (públicas y privadas), implementar ProtectedRoute.jsx para proteger rutas que requieren autenticación
 
 ---
 
 ## Fase 2: Componentes Base
 
-- [ ] **Crear componentes UI reutilizables**
+- [ ✅ ] **Crear componentes UI reutilizables**
   - Desarrollar componentes básicos en components/ui: Button.jsx, Input.jsx, Spinner.jsx, Card.jsx con estilos consistentes
 
 - [ ] **Crear componentes de Layout**
