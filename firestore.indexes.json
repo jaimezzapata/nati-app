@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "aportes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "natilleraId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fechaReporte",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "aportes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fechaReporte",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

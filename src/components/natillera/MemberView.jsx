@@ -5,7 +5,7 @@ import Button from '../ui/Button';
 import Card from '../ui/Card';
 import Input from '../ui/Input';
 
-function MemberView({ natillera, members, aportes, userId }) {
+function MemberView({ natillera, members, aportes, userId, totalAhorradoUsuario, totalAhorradoNatillera }) {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportData, setReportData] = useState({
     mesCuota: '',
@@ -61,6 +61,28 @@ function MemberView({ natillera, members, aportes, userId }) {
 
   return (
     <div className="space-y-6">
+      {/* Resumen de aportes del usuario */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50">
+          <p className="text-sm text-gray-600 mb-1">💰 Mi Total Ahorrado</p>
+          <p className="text-3xl font-bold text-blue-600">
+            {formatCurrency(totalAhorradoUsuario || 0)}
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            {myAportes.filter(a => a.estado === 'confirmado').length} aportes confirmados
+          </p>
+        </Card>
+        <Card className="bg-gradient-to-br from-emerald-50 to-teal-50">
+          <p className="text-sm text-gray-600 mb-1">🏆 Total de la Natillera</p>
+          <p className="text-3xl font-bold text-emerald-600">
+            {formatCurrency(totalAhorradoNatillera || 0)}
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            Aportes de {members.length} miembros
+          </p>
+        </Card>
+      </div>
+
       {/* Report Payment Button */}
       <Card>
         <div className="flex items-center justify-between">

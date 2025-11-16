@@ -18,6 +18,19 @@ import Card from '../../components/ui/Card';
 import Spinner from '../../components/ui/Spinner';
 import { formatCurrency, formatDate, getMonthName } from '../../utils/formatters';
 import { useAlert } from '../../hooks/useModal.jsx';
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 function ReportsPage() {
   const { natilleraId } = useParams();
@@ -317,6 +330,105 @@ function ReportsPage() {
             </p>
           </Card>
         </div>
+
+        {/* Gráficos estadísticos */}
+        {reportData.aportes.length > 0 && (
+          <Card className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Análisis Visual</h2>
+            
+            {/* Grid de gráficos */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              {/* Gráfico de distribución por estado */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3 text-center">
+                  Distribución por Estado
+                </h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Confirmados', value: estadisticas.totalConfirmados, color: '#10b981' },
+                        { name: 'Pendientes', value: estadisticas.totalPendientes, color: '#f59e0b' },
+                        { name: 'Rechazados', value: estadisticas.totalRechazados, color: '#ef4444' }
+                      ].filter(item => item.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {[
+                        { name: 'Confirmados', value: estadisticas.totalConfirmados, color: '#10b981' },
+                        { name: 'Pendientes', value: estadisticas.totalPendientes, color: '#f59e0b' },
+                        { name: 'Rechazados', value: estadisticas.totalRechazados, color: '#ef4444' }
+                      ].filter(item => item.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Gráfico de aportes por socio */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3 text-center">
+                  Aportes Confirmados por Socio
+                </h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={estadisticas.porSocio}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="nombre" 
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                      fontSize={12}
+                    />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value) => formatCurrency(value)}
+                      labelStyle={{ color: '#374151' }}
+                    />
+                    <Bar dataKey="totalConfirmado" fill="#10b981" name="Total Confirmado" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Gráfico de evolución mensual (solo si hay filtro de mes o rango de fechas) */}
+            {(filters.mesCuota || (filters.fechaInicio && filters.fechaFin)) && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3 text-center">
+                  Evolución por Estado
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    data={[
+                      {
+                        name: filters.mesCuota || 'Período Seleccionado',
+                        Confirmados: estadisticas.totalConfirmados,
+                        Pendientes: estadisticas.totalPendientes,
+                        Rechazados: estadisticas.totalRechazados
+                      }
+                    ]}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="Confirmados" fill="#10b981" />
+                    <Bar dataKey="Pendientes" fill="#f59e0b" />
+                    <Bar dataKey="Rechazados" fill="#ef4444" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </Card>
+        )}
 
         {/* Botones de exportación */}
         <Card className="mb-6">

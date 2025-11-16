@@ -496,32 +496,58 @@ export const subscribeToUserNatilleras = (userId, callback) => {
   );
   
   return onSnapshot(q, async (snapshot) => {
-    const natilleras = await Promise.all(
-      snapshot.docs.map(async (miembroDoc) => {
-        const miembroData = miembroDoc.data();
-        const natillera = await getNatillera(miembroData.natilleraId);
-        
-        if (!natillera) {
-          return null;
-        }
-        
-        // Contar miembros de la natillera
-        const miembrosNatilleraQuery = query(
-          collection(db, 'miembros'),
-          where('natilleraId', '==', miembroData.natilleraId)
-        );
-        const miembrosNatilleraSnapshot = await getDocs(miembrosNatilleraQuery);
-        
-        return {
-          ...natillera,
-          miembroId: miembroDoc.id,
-          rol: miembroData.rol,
-          cantidadMiembros: miembrosNatilleraSnapshot.size,
-        };
-      })
-    );
-    
-    callback(natilleras.filter(n => n !== null));
+    try {
+      console.log('Miembros encontrados:', snapshot.size);
+      
+      if (snapshot.empty) {
+        console.log('No hay natilleras para este usuario');
+        callback([]);
+        return;
+      }
+      
+      const natilleras = await Promise.all(
+        snapshot.docs.map(async (miembroDoc) => {
+          try {
+            const miembroData = miembroDoc.data();
+            console.log('Procesando natillera:', miembroData.natilleraId);
+            
+            const natillera = await getNatillera(miembroData.natilleraId);
+            
+            if (!natillera) {
+              console.warn('Natillera no encontrada:', miembroData.natilleraId);
+              return null;
+            }
+            
+            // Contar miembros de la natillera
+            const miembrosNatilleraQuery = query(
+              collection(db, 'miembros'),
+              where('natilleraId', '==', miembroData.natilleraId)
+            );
+            const miembrosNatilleraSnapshot = await getDocs(miembrosNatilleraQuery);
+            
+            return {
+              ...natillera,
+              miembroId: miembroDoc.id,
+              rol: miembroData.rol,
+              cantidadMiembros: miembrosNatilleraSnapshot.size,
+            };
+          } catch (error) {
+            console.error('Error procesando natillera:', error);
+            return null;
+          }
+        })
+      );
+      
+      const validNatilleras = natilleras.filter(n => n !== null);
+      console.log('Natilleras válidas:', validNatilleras.length);
+      callback(validNatilleras);
+    } catch (error) {
+      console.error('Error en subscribeToUserNatilleras:', error);
+      callback([]);
+    }
+  }, (error) => {
+    console.error('Error en onSnapshot de natilleras:', error);
+    callback([]);
   });
 };
 

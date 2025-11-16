@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Colección de usuarios
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && request.auth.uid == userId;
+      allow delete: if false;
+    }
+    
+    // Colección global de miembros - PERMISIVA para debugging
+    match /miembros/{miembroId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // Colección de natilleras - PERMISIVA para debugging
+    match /natilleras/{natilleraId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // Colección de aportes - PERMISIVA para debugging
+    match /aportes/{aporteId} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

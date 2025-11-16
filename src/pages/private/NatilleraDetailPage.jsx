@@ -24,6 +24,7 @@ function NatilleraDetailPage() {
   const [userRole, setUserRole] = useState(null);
   const [members, setMembers] = useState([]);
   const [totalAhorrado, setTotalAhorrado] = useState(0);
+  const [totalAhorradoUsuario, setTotalAhorradoUsuario] = useState(0);
   const [aportes, setAportes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -69,8 +70,14 @@ function NatilleraDetailPage() {
     // Subscribe to real-time updates for aportes
     const unsubscribe = subscribeToNatilleraAportes(id, (aportesData) => {
       setAportes(aportesData);
-      // Recalculate total when aportes change
+      // Recalculate totals when aportes change
       getTotalAhorrado(id).then(setTotalAhorrado);
+      
+      // Calculate user's individual total (only confirmados)
+      const userTotal = aportesData
+        .filter(a => a.userId === user.uid && a.estado === 'confirmado')
+        .reduce((sum, a) => sum + a.monto, 0);
+      setTotalAhorradoUsuario(userTotal);
     });
 
     return () => unsubscribe();
@@ -146,10 +153,20 @@ function NatilleraDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid md:grid-cols-4 gap-6">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Ahorrado</p>
+              <p className="text-sm text-gray-600 mb-1">
+                {userRole === 'admin' ? 'Total Natillera' : 'Total Natillera'}
+              </p>
               <p className="text-2xl font-bold text-emerald-600">
                 {formatCurrency(totalAhorrado)}
               </p>
+              {userRole === 'miembro' && (
+                <>
+                  <p className="text-xs text-gray-500 mt-2">Tu Total</p>
+                  <p className="text-lg font-semibold text-blue-600">
+                    {formatCurrency(totalAhorradoUsuario)}
+                  </p>
+                </>
+              )}
             </div>
             <div>
               <p className="text-sm text-gray-600 mb-1">Cuota</p>
@@ -191,6 +208,8 @@ function NatilleraDetailPage() {
             members={members}
             aportes={aportes}
             userId={user.uid}
+            totalAhorradoUsuario={totalAhorradoUsuario}
+            totalAhorradoNatillera={totalAhorrado}
           />
         )}
       </main>

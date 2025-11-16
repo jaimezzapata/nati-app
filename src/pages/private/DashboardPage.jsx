@@ -8,12 +8,18 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Spinner from '../../components/ui/Spinner';
 import Input from '../../components/ui/Input';
+import {
+  BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 function DashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [natilleras, setNatilleras] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [joinCode, setJoinCode] = useState('');
   const [joinLoading, setJoinLoading] = useState(false);
@@ -22,12 +28,22 @@ function DashboardPage() {
   useEffect(() => {
     if (!user) return;
 
-    const unsubscribe = subscribeToUserNatilleras(user.uid, (natillerasData) => {
-      setNatilleras(natillerasData);
-      setLoading(false);
-    });
+    console.log('Suscribiendo a natilleras del usuario:', user.uid);
+    
+    try {
+      const unsubscribe = subscribeToUserNatilleras(user.uid, (natillerasData) => {
+        console.log('Natilleras recibidas:', natillerasData);
+        setNatilleras(natillerasData);
+        setLoading(false);
+        setError('');
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    } catch (err) {
+      console.error('Error al suscribirse a natilleras:', err);
+      setError('Error al cargar tus natilleras');
+      setLoading(false);
+    }
   }, [user]);
 
   const handleLogout = async () => {
@@ -151,6 +167,94 @@ function DashboardPage() {
             Tus Natilleras
           </h2>
         </div>
+
+        {error && (
+          <Card className="mb-6 bg-red-50 border-red-200">
+            <p className="text-red-800">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="mt-2 text-sm text-red-600 underline"
+            >
+              Reintentar
+            </button>
+          </Card>
+        )}
+
+        {/* Resumen gráfico (solo si hay natilleras) */}
+        {!loading && natilleras.length > 0 && (
+          <Card className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Resumen</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Gráfico de cuotas por natillera */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-3 text-center">
+                  Cuota Mensual por Natillera
+                </h4>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={natilleras.map(n => ({
+                    nombre: n.nombre.length > 15 ? n.nombre.substring(0, 15) + '...' : n.nombre,
+                    cuota: n.montoCuota
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="nombre" 
+                      angle={-30}
+                      textAnchor="end"
+                      height={60}
+                      fontSize={11}
+                    />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value) => formatCurrency(value)}
+                      labelStyle={{ color: '#374151' }}
+                    />
+                    <Bar dataKey="cuota" fill="#10b981" name="Cuota" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Distribución por rol */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-3 text-center">
+                  Distribución por Rol
+                </h4>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { 
+                          name: 'Admin', 
+                          value: natilleras.filter(n => n.rol === 'admin').length,
+                          color: '#a855f7'
+                        },
+                        { 
+                          name: 'Miembro', 
+                          value: natilleras.filter(n => n.rol === 'miembro').length,
+                          color: '#3b82f6'
+                        }
+                      ].filter(item => item.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={60}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {[
+                        { name: 'Admin', value: natilleras.filter(n => n.rol === 'admin').length, color: '#a855f7' },
+                        { name: 'Miembro', value: natilleras.filter(n => n.rol === 'miembro').length, color: '#3b82f6' }
+                      ].filter(item => item.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {loading ? (
           <div className="flex justify-center py-12">
